@@ -2,10 +2,14 @@ package com.example.demo.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -30,8 +34,7 @@ public class EmployeeResource {
 		}
 	}
 
-	
-	@GetMapping(value="/getEmployees",produces = "application/json")
+	@GetMapping(value = "/getEmployees", produces = "application/json")
 	public List<Employee> getEmployees() {
 
 		List<Employee> listOfEmployess = employeeService.getEmployees();
@@ -40,6 +43,28 @@ public class EmployeeResource {
 		} else {
 			return listOfEmployess;
 		}
+	}
+
+	@DeleteMapping(value = "deleteEmployee/{empId}", produces = "application/json")
+	public String deleteEmployee(@PathVariable("empId") String empid) {
+		Optional<String> opt = Optional.ofNullable(empid);
+
+		if (opt.isPresent()) {
+			employeeService.deleteEmployee(empid);
+			return "Employee deleted successfully";
+		}
+		return "No Employee available";
+	}
+
+	@PutMapping(produces = "application/json", value = "/updateEmployee", consumes = "application/json")
+	public String updateEmployee(@RequestBody Employee emp) {
+
+		if (employeeService.updateEmployee(emp).isPresent()) {
+			return "Employee updated successfully";
+		}
+
+		return "No data has updated";
+
 	}
 
 }
